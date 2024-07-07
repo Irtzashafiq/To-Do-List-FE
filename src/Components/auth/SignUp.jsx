@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 
-const Login = ({ updateLogin }) => {
+const SignUp = ({ updateLogin }) => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [cpassword, setCPassword] = useState("");
 
-  const login = async () => {
+  const signup = async () => {
     const { data } = await axios.post(
-      "http://localhost:3000/auth/login",
-      { userName, password },
+      "http://localhost:3000/user/createUser",
+      { userName, password, confirmPassword: cpassword },
       { withCredentials: true }
     );
     if (data.error) {
@@ -17,10 +18,9 @@ const Login = ({ updateLogin }) => {
     }
     return alert(data.response.message);
   };
-
   return (
     <div className="flex flex-col justify-center items-center w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-      <p className="text-3xl font-bold mb-4">Login</p>
+      <p className="text-3xl font-bold mb-4">Sign Up</p>
       <form className="flex flex-col gap-4 w-full">
         <div className="flex flex-col">
           <label htmlFor="username" className="text-lg font-semibold mb-1">
@@ -31,7 +31,6 @@ const Login = ({ updateLogin }) => {
             id="username"
             name="username"
             placeholder="Enter your username"
-            required
             className="border-gray-300 border rounded-lg py-2 px-3 text-lg"
             onChange={(e) => setUserName(e.target.value)}
           />
@@ -45,35 +44,51 @@ const Login = ({ updateLogin }) => {
             id="password"
             name="password"
             placeholder="Enter your password"
-            required
             className="border-gray-300 border rounded-lg py-2 px-3 text-lg"
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+        <div className="flex flex-col">
+          <label
+            htmlFor="confirmPassword"
+            className="text-lg font-semibold mb-1"
+          >
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="Confirm your password"
+            className="border-gray-300 border rounded-lg py-2 px-3 text-lg"
+            onChange={(e) => setCPassword(e.target.value)}
+          />
+        </div>
+
         <button
-          type="button"
-          onClick={login}
-          disabled={!userName || !password}
+          disabled={!userName || !password || !cpassword}
+          onClick={signup}
+          type="submit"
           className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-300"
         >
-          Login
+          Sign Up
         </button>
       </form>
       <p className="mt-4 text-lg">
-        Do not have an account?{" "}
+        Already have an account?{" "}
         <span
           className="text-blue-500 cursor-pointer hover:underline"
-          onClick={() => updateLogin(false)}
+          onClick={() => updateLogin(true)}
         >
-          Sign Up
+          Login
         </span>
       </p>
     </div>
   );
 };
 
-Login.propTypes = {
+SignUp.propTypes = {
   updateLogin: PropTypes.func.isRequired,
 };
 
-export default Login;
+export default SignUp;
